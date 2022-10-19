@@ -18,7 +18,7 @@ public class ProductController {
 
     @Autowired
     private Environment env;
-    @Value("${server.port}")
+    @Value("${PORT:0}")
     private Integer port;
     @Autowired
     private IProductService productService;
@@ -27,7 +27,8 @@ public class ProductController {
     public List<Product> listProducts(){
         return productService.findAll().stream()
                 .map(product -> {
-                    product.setPort(port);
+                    product.setPort(Integer.parseInt(env.getProperty("local.server.port")));
+                    //product.setPort(port);
                     return product;
                 })
                 .collect(Collectors.toList());
@@ -36,7 +37,16 @@ public class ProductController {
     @GetMapping("/producto/{id}")
     public Product detail(@PathVariable Long id){
         Product product = productService.findByID(id);
-        product.setPort(port);
+        product.setPort(Integer.parseInt(env.getProperty("local.server.port")));
+        //product.setPort(port);
+
+
+		 /* try {
+			Thread.sleep(2000L);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}*/
+
         return product;
     }
 }
